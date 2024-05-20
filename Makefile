@@ -59,15 +59,23 @@ deps:
 	mkdir -p appengine/third-party
 	wget -N https://unpkg.com/@babel/standalone@7.14.8/babel.min.js
 	mv babel.min.js appengine/third-party/
-	@# GitHub doesn't support git archive, so download files using svn.
-	svn export --force https://github.com/ajaxorg/ace-builds/trunk/src-min-noconflict/ appengine/third-party/ace
+	@# GitHub doesn't support git archive, so clone git and extract just what is needed.
+	git clone https://github.com/ajaxorg/ace-builds.git temp-dir
+	mkdir appengine/third-party/ace
+	cp -r temp-dir/src-min-noconflict/* appengine/third-party/ace
+	rm -rf temp-dir
 	mkdir -p appengine/third-party/blockly
-	svn export --force https://github.com/NeilFraser/blockly-for-BG/trunk/ appengine/third-party/blockly
-	svn export --force https://github.com/CreateJS/SoundJS/trunk/lib/ appengine/third-party/SoundJS
+	git clone https://github.com/NeilFraser/blockly-for-BG.git appengine/third-party/blockly
+	rm -rf appengine/third-party/blockly/.git
+	git clone https://github.com/CreateJS/SoundJS.git temp-dir
+	mkdir appengine/third-party/SoundJS
+	cp -r temp-dir/lib/* appengine/third-party/SoundJS
+	rm -rf temp-dir
 	cp third-party/base.js appengine/third-party/
 	cp -R third-party/soundfonts appengine/third-party/
 
-	svn export --force https://github.com/NeilFraser/JS-Interpreter/trunk/ appengine/third-party/JS-Interpreter
+	git clone https://github.com/NeilFraser/JS-Interpreter.git appengine/third-party/JS-Interpreter
+	rm -rf appengine/third-party/JS-Interpreter/.git
 	@# Compile JS-Interpreter using SIMPLE_OPTIMIZATIONS because the Music game needs to mess with the stack.
 	java -jar build/third-party-downloads/closure-compiler.jar\
 	  --language_out ECMASCRIPT5\
